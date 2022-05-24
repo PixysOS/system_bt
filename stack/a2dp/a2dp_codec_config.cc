@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2016 The Android Open Source Project
  *
@@ -33,6 +34,7 @@
 #include "a2dp_vendor_aptx.h"
 #include "a2dp_vendor_aptx_hd.h"
 #include "a2dp_vendor_ldac.h"
+#include "a2dp_vendor_lhdcv5.h"
 #endif
 
 #include "bta/av/bta_av_int.h"
@@ -142,6 +144,12 @@ A2dpCodecConfig* A2dpCodecConfig::createCodec(
       codec_config = new A2dpCodecConfigLdacSink(codec_priority);
       break;
     case BTAV_A2DP_CODEC_INDEX_SOURCE_APTX_TWS:
+      break;
+    case BTAV_A2DP_CODEC_INDEX_SOURCE_LHDCV5:
+      codec_config = new A2dpCodecConfigLhdcV5Source(codec_priority);
+      break;
+    case BTAV_A2DP_CODEC_INDEX_SINK_LHDCV5:
+      codec_config = new A2dpCodecConfigLhdcV5Sink(codec_priority);
       break;
 #endif
     case BTAV_A2DP_CODEC_INDEX_MAX:
@@ -379,9 +387,11 @@ bool A2dpCodecConfig::setCodecUserConfig(
   //
   btav_a2dp_codec_config_t new_codec_config = getCodecConfig();
   if ((saved_codec_config.sample_rate != new_codec_config.sample_rate) ||
-      (saved_codec_config.bits_per_sample !=
-       new_codec_config.bits_per_sample) ||
-      (saved_codec_config.channel_mode != new_codec_config.channel_mode)) {
+      (saved_codec_config.bits_per_sample != new_codec_config.bits_per_sample) ||
+      (saved_codec_config.channel_mode != new_codec_config.channel_mode) ||
+      (saved_codec_config.codec_specific_1 != new_codec_config.codec_specific_1) ||
+      (saved_codec_config.codec_specific_2 != new_codec_config.codec_specific_2) ||
+      (saved_codec_config.codec_specific_3 != new_codec_config.codec_specific_3)) {
     *p_restart_input = true;
   }
 
@@ -604,6 +614,9 @@ bool A2dpCodecs::init() {
       } else if (strcmp(tok, "ldac") == 0) {
         LOG_INFO("%s: LDAC offload supported", __func__);
         offload_codec_support[BTAV_A2DP_CODEC_INDEX_SOURCE_LDAC] = true;
+      } else if (strcmp(tok, "lhdcv5") == 0) {
+        LOG_INFO("%s: LHDCV5 offload not supported", __func__);
+        offload_codec_support[BTAV_A2DP_CODEC_INDEX_SOURCE_LHDCV5] = false;
 #endif
       }
       tok = strtok_r(NULL, "-", &tmp_token);

@@ -156,6 +156,8 @@ cc_library_shared {
     required: [
         "bt_did.conf",
         "bt_stack.conf",
+        "liblhdcv5BT_enc",
+        "liblhdcv5BT_dec",
     ],
     cflags: [
         "-DBUILDCFG",

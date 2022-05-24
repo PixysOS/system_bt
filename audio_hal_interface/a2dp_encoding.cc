@@ -264,6 +264,11 @@ bool a2dp_get_selected_hal_codec_config(CodecConfiguration* codec_config) {
       }
       break;
     }
+    case BTAV_A2DP_CODEC_INDEX_SOURCE_LHDCV5:
+    case BTAV_A2DP_CODEC_INDEX_SINK_LHDCV5: {
+        return true;
+      }
+      break;
     case BTAV_A2DP_CODEC_INDEX_MAX:
       [[fallthrough]];
     default:

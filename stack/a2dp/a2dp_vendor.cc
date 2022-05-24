@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2016 The Android Open Source Project
  *
@@ -24,6 +25,7 @@
 #include "a2dp_vendor_aptx.h"
 #include "a2dp_vendor_aptx_hd.h"
 #include "a2dp_vendor_ldac.h"
+#include "a2dp_vendor_lhdcv5.h"
 #include "bt_target.h"
 #include "osi/include/log.h"
 #include "osi/include/osi.h"
@@ -49,6 +51,11 @@ bool A2DP_IsVendorSourceCodecValid(const uint8_t* p_codec_info) {
     return A2DP_IsVendorSourceCodecValidLdac(p_codec_info);
   }
 
+  // Check for Savitech LHDCV5
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV5_CODEC_ID) {
+    return A2DP_IsVendorSourceCodecValidLhdcV5(p_codec_info);
+  }
+
   // Add checks based on <vendor_id, codec_id>
 
   return false;
@@ -66,6 +73,11 @@ bool A2DP_IsVendorSinkCodecValid(const uint8_t* p_codec_info) {
     return A2DP_IsVendorSinkCodecValidLdac(p_codec_info);
   }
 
+  // Check for Savitech LHDCV5 Sink
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV5_CODEC_ID) {
+    return A2DP_IsVendorSinkCodecValidLhdcV5(p_codec_info);
+  }
+
   return false;
 }
 
@@ -81,6 +93,10 @@ bool A2DP_IsVendorPeerSourceCodecValid(const uint8_t* p_codec_info) {
     return A2DP_IsVendorPeerSourceCodecValidLdac(p_codec_info);
   }
 
+  // Check for Savitech LHDCV5 Sink
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV5_CODEC_ID) {
+    return A2DP_IsVendorPeerSourceCodecValidLhdcV5(p_codec_info);
+  }
   return false;
 }
 
@@ -105,6 +121,11 @@ bool A2DP_IsVendorPeerSinkCodecValid(const uint8_t* p_codec_info) {
     return A2DP_IsVendorPeerSinkCodecValidLdac(p_codec_info);
   }
 
+  // Check for Savitech LHDCV5
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV5_CODEC_ID) {
+    return A2DP_IsVendorPeerSinkCodecValidLhdcV5(p_codec_info);
+  }
+
   // Add checks based on <vendor_id, codec_id>
 
   return false;
@@ -122,6 +143,11 @@ bool A2DP_IsVendorSinkCodecSupported(const uint8_t* p_codec_info) {
     return A2DP_IsVendorSinkCodecSupportedLdac(p_codec_info);
   }
 
+  // Check for Savitech LHDCV5 Sink
+  else if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV5_CODEC_ID) {
+    return A2DP_IsVendorSinkCodecSupportedLhdcV5(p_codec_info);
+  }
+
   return false;
 }
 
@@ -135,6 +161,11 @@ bool A2DP_IsVendorPeerSourceCodecSupported(const uint8_t* p_codec_info) {
   // Check for LDAC
   if (vendor_id == A2DP_LDAC_VENDOR_ID && codec_id == A2DP_LDAC_CODEC_ID) {
     return A2DP_IsPeerSourceCodecSupportedLdac(p_codec_info);
+  }
+
+  // Check for Savitech LHDCV5 Sink
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV5_CODEC_ID) {
+    return A2DP_IsPeerSourceCodecSupportedLhdcV5(p_codec_info);
   }
 
   return false;
@@ -183,6 +214,11 @@ bool A2DP_VendorUsesRtpHeader(bool content_protection_enabled,
                                         p_codec_info);
   }
 
+  // Check for Savitech LHDCV5
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV5_CODEC_ID) {
+    return A2DP_VendorUsesRtpHeaderLhdcV5(content_protection_enabled,
+                                          p_codec_info);
+  }
   // Add checks based on <content_protection_enabled, vendor_id, codec_id>
 
   return true;
@@ -207,6 +243,11 @@ const char* A2DP_VendorCodecName(const uint8_t* p_codec_info) {
   // Check for LDAC
   if (vendor_id == A2DP_LDAC_VENDOR_ID && codec_id == A2DP_LDAC_CODEC_ID) {
     return A2DP_VendorCodecNameLdac(p_codec_info);
+  }
+
+  // Check for Savitech LHDCV5
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV5_CODEC_ID) {
+    return A2DP_VendorCodecNameLhdcV5(p_codec_info);
   }
 
   // Add checks based on <vendor_id, codec_id>
@@ -246,6 +287,11 @@ bool A2DP_VendorCodecTypeEquals(const uint8_t* p_codec_info_a,
   // Check for LDAC
   if (vendor_id_a == A2DP_LDAC_VENDOR_ID && codec_id_a == A2DP_LDAC_CODEC_ID) {
     return A2DP_VendorCodecTypeEqualsLdac(p_codec_info_a, p_codec_info_b);
+  }
+
+  // Check for Savitech LHDCV5
+  if (vendor_id_a == A2DP_LHDC_VENDOR_ID && codec_id_a == A2DP_LHDCV5_CODEC_ID) {
+    return A2DP_VendorCodecTypeEqualsLhdcV5(p_codec_info_a, p_codec_info_b);
   }
 
   // OPTIONAL: Add extra vendor-specific checks based on the
@@ -288,6 +334,11 @@ bool A2DP_VendorCodecEquals(const uint8_t* p_codec_info_a,
     return A2DP_VendorCodecEqualsLdac(p_codec_info_a, p_codec_info_b);
   }
 
+  // Check for Savitech LHDCV5
+  if (vendor_id_a == A2DP_LHDC_VENDOR_ID && codec_id_a == A2DP_LHDCV5_CODEC_ID) {
+    return A2DP_VendorCodecEqualsLhdcV5(p_codec_info_a, p_codec_info_b);
+  }
+
   // Add extra vendor-specific checks based on the
   // vendor-specific data stored in "p_codec_info_a" and "p_codec_info_b".
 
@@ -313,6 +364,11 @@ int A2DP_VendorGetBitRate(const uint8_t* p_codec_info) {
   // Check for LDAC
   if (vendor_id == A2DP_LDAC_VENDOR_ID && codec_id == A2DP_LDAC_CODEC_ID) {
     return A2DP_VendorGetBitRateLdac(p_codec_info);
+  }
+
+  // Check for Savitech LHDCV5
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV5_CODEC_ID) {
+    return A2DP_VendorGetBitRateLhdcV5(p_codec_info);
   }
 
   // Add checks based on <vendor_id, codec_id>
@@ -341,6 +397,11 @@ int A2DP_VendorGetTrackSampleRate(const uint8_t* p_codec_info) {
     return A2DP_VendorGetTrackSampleRateLdac(p_codec_info);
   }
 
+  // Check for Savitech LHDCV5
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV5_CODEC_ID) {
+    return A2DP_VendorGetTrackSampleRateLhdcV5(p_codec_info);
+  }
+
   // Add checks based on <vendor_id, codec_id>
 
   return -1;
@@ -365,6 +426,11 @@ int A2DP_VendorGetTrackBitsPerSample(const uint8_t* p_codec_info) {
   // Check for LDAC
   if (vendor_id == A2DP_LDAC_VENDOR_ID && codec_id == A2DP_LDAC_CODEC_ID) {
     return A2DP_VendorGetTrackBitsPerSampleLdac(p_codec_info);
+  }
+
+  // Check for Savitech LHDCV5
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV5_CODEC_ID) {
+    return A2DP_VendorGetTrackBitsPerSampleLhdcV5(p_codec_info);
   }
 
   // Add checks based on <vendor_id, codec_id>
@@ -393,6 +459,11 @@ int A2DP_VendorGetTrackChannelCount(const uint8_t* p_codec_info) {
     return A2DP_VendorGetTrackChannelCountLdac(p_codec_info);
   }
 
+  // Check for Savitech LHDCV5
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV5_CODEC_ID) {
+    return A2DP_VendorGetTrackChannelCountLhdcV5(p_codec_info);
+  }
+
   // Add checks based on <vendor_id, codec_id>
 
   return -1;
@@ -408,6 +479,11 @@ int A2DP_VendorGetSinkTrackChannelType(const uint8_t* p_codec_info) {
   // Check for LDAC
   if (vendor_id == A2DP_LDAC_VENDOR_ID && codec_id == A2DP_LDAC_CODEC_ID) {
     return A2DP_VendorGetSinkTrackChannelTypeLdac(p_codec_info);
+  }
+
+  // Check for Savitech LHDC V5
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV5_CODEC_ID) {
+    return A2DP_VendorGetSinkTrackChannelTypeLhdcV5(p_codec_info);
   }
 
   return -1;
@@ -435,6 +511,11 @@ bool A2DP_VendorGetPacketTimestamp(const uint8_t* p_codec_info,
   // Check for LDAC
   if (vendor_id == A2DP_LDAC_VENDOR_ID && codec_id == A2DP_LDAC_CODEC_ID) {
     return A2DP_VendorGetPacketTimestampLdac(p_codec_info, p_data, p_timestamp);
+  }
+
+  // Check for Savitech LHDCV5
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV5_CODEC_ID) {
+    return A2DP_VendorGetPacketTimestampLhdcV5(p_codec_info, p_data, p_timestamp);
   }
 
   // Add checks based on <vendor_id, codec_id>
@@ -467,6 +548,12 @@ bool A2DP_VendorBuildCodecHeader(const uint8_t* p_codec_info, BT_HDR* p_buf,
                                            frames_per_packet);
   }
 
+  // Check for Savitech LHDCV5
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV5_CODEC_ID) {
+    return A2DP_VendorBuildCodecHeaderLhdcV5(p_codec_info, p_buf,
+                                               frames_per_packet);
+  }
+
   // Add checks based on <vendor_id, codec_id>
 
   return false;
@@ -494,6 +581,11 @@ const tA2DP_ENCODER_INTERFACE* A2DP_VendorGetEncoderInterface(
     return A2DP_VendorGetEncoderInterfaceLdac(p_codec_info);
   }
 
+  // Check for Savitech LHDCV5
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV5_CODEC_ID) {
+    return A2DP_VendorGetEncoderInterfaceLhdcV5(p_codec_info);
+  }
+
   // Add checks based on <vendor_id, codec_id>
 
   return NULL;
@@ -510,6 +602,11 @@ const tA2DP_DECODER_INTERFACE* A2DP_VendorGetDecoderInterface(
   // Check for LDAC
   if (vendor_id == A2DP_LDAC_VENDOR_ID && codec_id == A2DP_LDAC_CODEC_ID) {
     return A2DP_VendorGetDecoderInterfaceLdac(p_codec_info);
+  }
+
+  // Check for Savitech LHDCV5 Sink
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV5_CODEC_ID) {
+    return A2DP_VendorGetDecoderInterfaceLhdcV5(p_codec_info);
   }
 
   return NULL;
@@ -534,6 +631,11 @@ bool A2DP_VendorAdjustCodec(uint8_t* p_codec_info) {
   // Check for LDAC
   if (vendor_id == A2DP_LDAC_VENDOR_ID && codec_id == A2DP_LDAC_CODEC_ID) {
     return A2DP_VendorAdjustCodecLdac(p_codec_info);
+  }
+
+  // Check for Savitech LHDCV5
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV5_CODEC_ID) {
+    return A2DP_VendorAdjustCodecLhdcV5(p_codec_info);
   }
 
   // Add checks based on <vendor_id, codec_id>
@@ -563,6 +665,11 @@ btav_a2dp_codec_index_t A2DP_VendorSourceCodecIndex(
     return A2DP_VendorSourceCodecIndexLdac(p_codec_info);
   }
 
+  // Check for Savitech LHDCV5
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV5_CODEC_ID) {
+    return A2DP_VendorSourceCodecIndexLhdcV5(p_codec_info);
+  }
+
   // Add checks based on <vendor_id, codec_id>
 
   return BTAV_A2DP_CODEC_INDEX_MAX;
@@ -578,6 +685,11 @@ btav_a2dp_codec_index_t A2DP_VendorSinkCodecIndex(const uint8_t* p_codec_info) {
   // Check for LDAC
   if (vendor_id == A2DP_LDAC_VENDOR_ID && codec_id == A2DP_LDAC_CODEC_ID) {
     return A2DP_VendorSinkCodecIndexLdac(p_codec_info);
+  }
+
+  // Check for Savitech LHDC V5
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV5_CODEC_ID) {
+    return A2DP_VendorSinkCodecIndexLhdcV5(p_codec_info);
   }
 
   return BTAV_A2DP_CODEC_INDEX_MAX;
@@ -603,6 +715,10 @@ const char* A2DP_VendorCodecIndexStr(btav_a2dp_codec_index_t codec_index) {
       return A2DP_VendorCodecIndexStrLdacSink();
     case BTAV_A2DP_CODEC_INDEX_SOURCE_APTX_TWS:
       break;
+    case BTAV_A2DP_CODEC_INDEX_SOURCE_LHDCV5:
+      return A2DP_VendorCodecIndexStrLhdcV5();
+    case BTAV_A2DP_CODEC_INDEX_SINK_LHDCV5:
+      return A2DP_VendorCodecIndexStrLhdcV5Sink();
     // Add a switch statement for each vendor-specific codec
     case BTAV_A2DP_CODEC_INDEX_MAX:
       break;
@@ -632,6 +748,10 @@ bool A2DP_VendorInitCodecConfig(btav_a2dp_codec_index_t codec_index,
       return A2DP_VendorInitCodecConfigLdacSink(p_cfg);
     case BTAV_A2DP_CODEC_INDEX_SOURCE_APTX_TWS:
       break;
+    case BTAV_A2DP_CODEC_INDEX_SOURCE_LHDCV5:
+      return A2DP_VendorInitCodecConfigLhdcV5(p_cfg);
+    case BTAV_A2DP_CODEC_INDEX_SINK_LHDCV5:
+      return A2DP_VendorInitCodecConfigLhdcV5Sink(p_cfg);
     // Add a switch statement for each vendor-specific codec
     case BTAV_A2DP_CODEC_INDEX_MAX:
       break;
@@ -659,6 +779,11 @@ std::string A2DP_VendorCodecInfoString(const uint8_t* p_codec_info) {
   // Check for LDAC
   if (vendor_id == A2DP_LDAC_VENDOR_ID && codec_id == A2DP_LDAC_CODEC_ID) {
     return A2DP_VendorCodecInfoStringLdac(p_codec_info);
+  }
+
+  // Check for Savitech LHDCV5
+  if (vendor_id == A2DP_LHDC_VENDOR_ID && codec_id == A2DP_LHDCV5_CODEC_ID) {
+    return A2DP_VendorCodecInfoStringLhdcV5(p_codec_info);
   }
 
   // Add checks based on <vendor_id, codec_id>

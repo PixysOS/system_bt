@@ -164,7 +164,10 @@ static size_t transcodeQ23ToFloat(uint8_t* buffer, size_t length,
   size_t i = 0;
   for (; i <= length / sampleSize; i++) {
     size_t offset = i * sampleSize;
-    int32_t sample = *((int32_t*)(buffer + offset - 1)) & 0x00FFFFFF;
+    //int32_t sample = *((int32_t*)(buffer + offset - 1)) & 0x00FFFFFF;
+    // fix wrong mask
+    int32_t sample = *((int32_t*)(buffer + offset - 1)) & 0xFFFFFF00;
+    sample = sample >> 8;
     trackHolder->buffer[i] = sample * kScaleQ23ToFloat;
   }
   return i * sampleSize;

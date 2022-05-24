@@ -819,7 +819,7 @@
 
 /* Number of simultaneous stream endpoints. */
 #ifndef AVDT_NUM_SEPS
-#define AVDT_NUM_SEPS 6
+#define AVDT_NUM_SEPS 10
 #endif
 
 /* Number of transport channels setup by AVDT for all media streams */

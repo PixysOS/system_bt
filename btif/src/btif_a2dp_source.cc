@@ -904,10 +904,26 @@ static uint32_t btif_a2dp_source_read_callback(uint8_t* p_buf, uint32_t len) {
   uint16_t event;
   uint32_t bytes_read = 0;
 
+  uint32_t bytes_offset = 0;
+  uint32_t len_read = len;
+  uint32_t timeout_cnt = 0;
+
+  while (true) {
   if (bluetooth::audio::a2dp::is_hal_2_0_enabled()) {
-    bytes_read = bluetooth::audio::a2dp::read(p_buf, len);
+      bytes_read = bluetooth::audio::a2dp::read(p_buf + bytes_offset, len_read);
   } else if (a2dp_uipc != nullptr) {
-    bytes_read = UIPC_Read(*a2dp_uipc, UIPC_CH_ID_AV_AUDIO, &event, p_buf, len);
+      bytes_read = UIPC_Read(*a2dp_uipc, UIPC_CH_ID_AV_AUDIO, &event, p_buf + bytes_offset, len);
+    }
+
+    // Savitech LHDC -- support LHDC Low Latency Mode
+    bytes_offset += bytes_read;
+    len_read -= bytes_read;
+    timeout_cnt++;
+    if (len_read <= 0 || timeout_cnt >= 5) {
+        bytes_read = bytes_offset;
+        break;
+    }
+    usleep(1000);
   }
 
   if (bytes_read < len) {
